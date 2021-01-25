@@ -25,7 +25,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         TableName: todosTable,
         Key: {
             userId: "Jeff",
-            todoId: "33"
+            todoId: todoId
         },
         ExpressionAttributeNames: {"#name": "name"},
         UpdateExpression: "set #name = :name, dueDate = :dueDate, done = :done",
