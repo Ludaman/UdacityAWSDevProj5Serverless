@@ -57,30 +57,44 @@ functions:
       - http:
           method: patch
           path: todos/{todoId}
+  # TODO: Configure this function
+ # DeleteTodo:
+  #  handler: src/lambda/http/deleteTodo.handler
+   # events:
+    #  - http:
+     #     method: delete
+      #    path: todos/{todoId}
 
+  # TODO: Configure this function
+ # GenerateUploadUrl:
+  #  handler: src/lambda/http/generateUploadUrl.handler
+   # events:
+    #  - http:
+     #     method: post
+      #    path: todos/{todoId}/attachment
 resources:
   Resources:
     TodosDynamoDBTable:
       Type: "AWS::DynamoDB::Table"
       Properties:
         AttributeDefinitions:
-          - AttributeName: groupId
+          - AttributeName: userId
             AttributeType: S
-          - AttributeName: timestamp
+          - AttributeName: todoId
             AttributeType: S
-          - AttributeName: imageId
-            AttributeType: S
+          - AttributeName: attachmentUrl
+            AttributeType: S                            
         KeySchema:
-          - AttributeName: groupId
+          - AttributeName: userId
             KeyType: HASH
-          - AttributeName: timestamp
+          - AttributeName: todoId
             KeyType: RANGE
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.TODOS_TABLE}
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.INDEX_NAME}
             KeySchema:
-            - AttributeName: imageId
+            - AttributeName: attachmentUrl
               KeyType: HASH
             Projection:
               ProjectionType: ALL
