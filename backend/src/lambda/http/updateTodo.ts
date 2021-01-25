@@ -1,6 +1,5 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-import * as uuid from 'uuid'
 import * as AWS  from 'aws-sdk'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
 
