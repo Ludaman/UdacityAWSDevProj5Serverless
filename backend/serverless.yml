@@ -50,6 +50,13 @@ functions:
       - http:
           method: post
           path: todos
+  # TODO: Configure this function
+  UpdateTodo:
+    handler: src/lambda/http/updateTodo.handler
+    events:
+      - http:
+          method: patch
+          path: todos/{todoId}
 
 resources:
   Resources:

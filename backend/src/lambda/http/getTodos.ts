@@ -11,9 +11,9 @@ const todosTable = process.env.TODOS_TABLE
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   // TODO: Get all TODO items for a current user , doing for all users now
   //need to do this per user by using query properly
-  console.log('Processing event: ', event)
-
-  const result = await docClient.query({
+  console.log('getTodos.ts Processing event: ', event)
+//must update to use query instead when I start querying by userID
+  const result = await docClient.scan({
     TableName: todosTable
   }).promise()
 
