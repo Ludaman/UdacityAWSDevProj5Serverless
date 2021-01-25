@@ -66,12 +66,12 @@ functions:
           path: todos/{todoId}
 
   # TODO: Configure this function
- # GenerateUploadUrl:
-  #  handler: src/lambda/http/generateUploadUrl.handler
-   # events:
-    #  - http:
-     #     method: post
-      #    path: todos/{todoId}/attachment
+  GenerateUploadUrl:
+    handler: src/lambda/http/generateUploadUrl.handler
+    events:
+      - http:
+          method: post
+          path: todos/{todoId}/attachment
 resources:
   Resources:
     TodosDynamoDBTable:
