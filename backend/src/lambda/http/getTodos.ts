@@ -15,14 +15,14 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   console.log('getTodos.ts Processing event: ', event)
   const userId = parseAuthorization(event.headers.Authorization)
 
-//must update to use query instead when I start querying by userID
+//This will scan for all results in the table and can be used for testing if desired
   // const result = await docClient.scan({
   //   TableName: todosTable
   // }).promise()
 
   const result = await docClient.query({
     TableName: todosTable,
-    KeyConditionExpression: 'userid = :userId',
+    KeyConditionExpression: 'userId = :userId',
     ExpressionAttributeValues: {
       ':userId': userId
     }    
@@ -33,7 +33,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   return {
     statusCode: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
       items
