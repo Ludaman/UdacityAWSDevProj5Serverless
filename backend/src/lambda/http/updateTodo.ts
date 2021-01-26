@@ -2,6 +2,7 @@ import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import * as AWS  from 'aws-sdk'
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
+import { parseAuthorization } from '../../auth/utils'
 
 
 
@@ -18,13 +19,14 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     console.log('Attempting to update todoID: ', todoId)
 
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
+  const userId = parseAuthorization(event.headers.Authorization)
 
   console.log('Parsed into: ', updatedTodo)
 
     const newitem = await docClient.update({
         TableName: todosTable,
         Key: {
-            userId: "Jeff",
+            userId: userId,
             todoId: todoId
         },
         ExpressionAttributeNames: {"#name": "name"},
