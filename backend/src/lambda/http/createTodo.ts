@@ -3,11 +3,10 @@ import 'source-map-support/register'
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 import * as uuid from 'uuid'
-import * as AWS  from 'aws-sdk'
 import { CreateTodoRequest } from '../../requests/CreateTodoRequest'
 import { parseAuthorization } from '../../auth/utils'
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todoTable = process.env.TODOS_TABLE
+import { createEntry } from '../dyndbcalls/createentry'
+
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   
@@ -29,10 +28,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }//assume that attachmentURL will come via update only
 
     //actually write it to the dynamoDB
-    await docClient.put({
-        TableName: todoTable,
-        Item: newItem
-      }).promise()
+    await createEntry(newItem)
   
       //return to client application that write succeeded
   return {
@@ -46,4 +42,3 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     })
   }
 }
-
