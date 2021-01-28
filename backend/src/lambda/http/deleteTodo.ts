@@ -1,11 +1,8 @@
 import 'source-map-support/register'
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-import * as AWS  from 'aws-sdk'
 import { parseAuthorization } from '../../auth/utils'
-
-const docClient = new AWS.DynamoDB.DocumentClient()
+import { deleteItemById } from '../dyndbcalls/deleteitem'
 const todosTable = process.env.TODOS_TABLE
-
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log('deleteTodo.ts Processing event: ', event)
@@ -20,17 +17,10 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     Key: {
       userId: userId,
       todoId: todoId
-  }      
-}
+    }      
+  }
 
-  await docClient.delete(params, function(err, data) {
-    if (err) {
-        console.error("Unable to delete item", JSON.stringify(err))
-    }
-    else {
-        console.log("DeleteItem succeeded", JSON.stringify(data))
-    }
-  }).promise()
+  await deleteItemById(params)
 
   return {
     statusCode: 201,
@@ -40,5 +30,4 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     },
     body: "Deleted item"
   }
-
 }

@@ -13,6 +13,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   console.log('Attempting to update todoID: ', todoId)
 
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
+  
   const userId = parseAuthorization(event.headers.Authorization)
 
   console.log('Parsed into: ', updatedTodo)

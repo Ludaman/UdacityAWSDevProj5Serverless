@@ -8,8 +8,6 @@ import { updateTodosURL } from '../dyndbcalls/updateurl'
 import { getUploadUrl } from '../s3calls/getsignedurl'
 
 
-
-
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId
   console.log('getULR.ts Processing event: ', event)
@@ -26,7 +24,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   //const newItem = await updateTodosURL(newUrl, todoId, userId) 
   await updateTodosURL(newUrl, todoId, userId) 
 
-  
   return {
     statusCode: 201,
     headers: {

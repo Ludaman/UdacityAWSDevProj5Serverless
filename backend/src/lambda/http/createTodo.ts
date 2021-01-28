@@ -28,17 +28,21 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     }//assume that attachmentURL will come via update only
 
     //actually write it to the dynamoDB
-    await createEntry(newItem)
+     await createEntry(newItem)
   
       //return to client application that write succeeded
   return {
-    statusCode: 201,
+    statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
     body: JSON.stringify({
-      newItem
-    })
+      message: `Item successfuly created ${newItem}`,
+      item: newItem,
+    },
+    null,
+    2,
+    )
   }
 }
