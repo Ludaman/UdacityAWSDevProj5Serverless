@@ -1,12 +1,7 @@
 import 'source-map-support/register'
-
+import { getFromDynDB } from '../dyndbcalls/gettodos'  //call to dynDB functions
 import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } from 'aws-lambda'
-import * as AWS  from 'aws-sdk'
 import { parseAuthorization } from '../../auth/utils'
-
-const docClient = new AWS.DynamoDB.DocumentClient()
-
-const todosTable = process.env.TODOS_TABLE
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -20,15 +15,10 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   //   TableName: todosTable
   // }).promise()
 
-  const result = await docClient.query({
-    TableName: todosTable,
-    KeyConditionExpression: 'userId = :userId',
-    ExpressionAttributeValues: {
-      ':userId': userId
-    }    
-  }).promise()
+  const result = await getFromDynDB(userId)
 
   const items = result.Items
+  console.log('getTodos.ts returning these items : ', items)
 
   return {
     statusCode: 200,
@@ -40,5 +30,6 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
       items
     })
   }
-
 }
+
+
