@@ -1,43 +1,23 @@
 import 'source-map-support/register'
-import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-import * as AWS  from 'aws-sdk'
-import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest'
-import { parseAuthorization } from '../../auth/utils'
-
-
-
-const docClient = new AWS.DynamoDB.DocumentClient()
-const todosTable = process.env.TODOS_TABLE
-//const todoIdIndex = process.env.INDEX_NAME
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda' //required for lambda
+import { parseAuthorization } from '../../auth/utils'  //call to authentication used for Lambda
+import { updateDynDB } from '../dyndbcalls/update'  //call to dynDB functions
+import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest' //keep formats consistent between files
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    console.log('updateTodos.ts Processing event: ', event)
+  console.log('updateTodos.ts Processing event: ', event)
 
-    const todoId = event.pathParameters.todoId
+  const todoId = event.pathParameters.todoId
 
-    console.log('Attempting to update todoID: ', todoId)
+  console.log('Attempting to update todoID: ', todoId)
 
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
   const userId = parseAuthorization(event.headers.Authorization)
 
   console.log('Parsed into: ', updatedTodo)
 
-    const newitem = await docClient.update({
-        TableName: todosTable,
-        Key: {
-            userId: userId,
-            todoId: todoId
-        },
-        ExpressionAttributeNames: {"#name": "name"},
-        UpdateExpression: "set #name = :name, dueDate = :dueDate, done = :done",
-        ExpressionAttributeValues: {
-            ":name": updatedTodo.name,
-            ":dueDate": updatedTodo.dueDate,
-            ":done": updatedTodo.done
-        },
-        ReturnValues: "UPDATED_NEW"
-      }).promise()
+    const newitem = await updateDynDB(userId, todoId, updatedTodo)
   
       //return to client application that write succeeded
     return {
@@ -51,3 +31,5 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         })
     }
 }
+
+
