@@ -36,6 +36,7 @@ functions:
           path: todos
           authorizer: Auth
           cors: true
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -51,7 +52,8 @@ functions:
           method: post
           path: todos
           authorizer: Auth
-          cors: true          
+          cors: true    
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -66,7 +68,8 @@ functions:
           method: patch
           path: todos/{todoId}
           authorizer: Auth
-          cors: true          
+          cors: true     
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -83,7 +86,8 @@ functions:
           method: delete
           path: todos/{todoId}
           authorizer: Auth
-          cors: true         
+          cors: true      
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -98,6 +102,7 @@ functions:
           method: post
           path: todos/{todoId}/attachment
           cors: true
+          reqValidatorName: RequestBodyValidator
     iamRoleStatements:
       - Effect: Allow
         Action:
