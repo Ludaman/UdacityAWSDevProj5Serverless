@@ -3,15 +3,20 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { parseAuthorization } from '../../auth/utils'
 import { deleteItemById } from '../dyndbcalls/deleteitem'
 const todosTable = process.env.TODOS_TABLE
+import { createLogger } from '../../utils/logger'
+
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log('deleteTodo.ts Processing event: ', event)
+  const logger = createLogger('deletetodo')
 
+  
+  //console.log('deleteTodo.ts Processing event: ', event)
+  logger.info('deleteTodo.ts Processing event: ', event)
   const todoId = event.pathParameters.todoId
   const userId = parseAuthorization(event.headers.Authorization)
 
-  console.log('attempting to delete ID: ', todoId)
-
+  //console.log('attempting to delete ID: ', todoId)
+  logger.info('attempting to delete ID: ', todoId)
   const params = {
     TableName: todosTable,
     Key: {

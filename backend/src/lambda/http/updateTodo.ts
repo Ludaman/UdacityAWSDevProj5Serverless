@@ -3,20 +3,27 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 import { parseAuthorization } from '../../auth/utils'  //call to authentication used for Lambda
 import { updateDynDB } from '../dyndbcalls/update'  //call to dynDB functions
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest' //keep formats consistent between files
+import { createLogger } from '../../utils/logger'
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log('updateTodos.ts Processing event: ', event)
+  const logger = createLogger('updatetodo')
+
+
+ // console.log('updateTodos.ts Processing event: ', event)
+  logger.info('updateTodos.ts Processing event: ', event)
 
   const todoId = event.pathParameters.todoId
 
-  console.log('Attempting to update todoID: ', todoId)
+ // console.log('Attempting to update todoID: ', todoId)
+  logger.info('Attempting to update todoID: ', todoId)
 
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
   
   const userId = parseAuthorization(event.headers.Authorization)
 
-  console.log('Parsed into: ', updatedTodo)
+  //console.log('Parsed into: ', updatedTodo)
+  logger.info('Parsed into: ', updatedTodo)
 
     const newitem = await updateDynDB(userId, todoId, updatedTodo)
   

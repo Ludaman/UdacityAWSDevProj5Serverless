@@ -1,4 +1,5 @@
 import 'source-map-support/register'
+import { createLogger } from '../../utils/logger'
 
 
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
@@ -9,8 +10,12 @@ import { createEntry } from '../dyndbcalls/createentry'
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+    const logger = createLogger('createtodo')
+
   
-    console.log('createTodo.ts Processing event: ', event)//indicate I got into the method
+    //console.log('createTodo.ts Processing event: ', event)//indicate I got into the method
+
+    logger.info('createTodo.ts Processing event: ', event)
 
     const itemId = uuid.v4()
     const timestamp = new Date().toISOString()
