@@ -4,6 +4,7 @@ import { parseAuthorization } from '../../auth/utils'  //call to authentication 
 import { updateDynDB } from '../dyndbcalls/update'  //call to dynDB functions
 import { UpdateTodoRequest } from '../../requests/UpdateTodoRequest' //keep formats consistent between files
 import { createLogger } from '../../utils/logger'
+import { invokeLambda } from '../lambdacalls/invokelambda'  //call to function able to invoke another lambdaFunction
 
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -25,19 +26,22 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   //console.log('Parsed into: ', updatedTodo)
   logger.info('Parsed into: ', updatedTodo)
 
-    const newitem = await updateDynDB(userId, todoId, updatedTodo)
-  
-      //return to client application that write succeeded
-    return {
-        statusCode: 201,
-        headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true
-        },
-        body: JSON.stringify({
-            newitem
-        })
-    }
+  const newitem = await updateDynDB(userId, todoId, updatedTodo)
+
+
+  invokeLambda(todoId)
+
+    //return to client application that write succeeded
+  return {
+      statusCode: 201,
+      headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true
+      },
+      body: JSON.stringify({
+          newitem
+      })
+  }
 }
 
 

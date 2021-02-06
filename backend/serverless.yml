@@ -95,7 +95,13 @@ functions:
         Action:
           - xray:PutTraceSegments
           - xray:PutTelemetryRecords
-        Resource: "*"                  
+        Resource: "*"   
+      - Effect: Allow
+        Action:
+          - lambda:InvokeFunction
+          - lambda:InvokeAsync
+        Resource: "*"   
+                     
         
   # TODO: Configure this function
   DeleteTodo:
@@ -117,6 +123,14 @@ functions:
           - xray:PutTraceSegments
           - xray:PutTelemetryRecords
         Resource: "*"                    
+
+  # TODO: Configure this function
+  ModifyImage:
+    handler: src/lambda/http/modifyimagehandler.handler
+    events:
+      - http:
+          method: post
+          cors: true        
 
   # TODO: Configure this function
   GenerateUploadUrl:
@@ -143,7 +157,7 @@ functions:
           - xray:PutTraceSegments
           - xray:PutTelemetryRecords
         Resource: "*"     
-                              
+
 resources:
   Resources:
 
