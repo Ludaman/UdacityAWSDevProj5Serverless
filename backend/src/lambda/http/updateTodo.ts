@@ -16,20 +16,14 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   const todoId = event.pathParameters.todoId
 
- // console.log('Attempting to update todoID: ', todoId)
-  logger.info('Attempting to update todoID: ', todoId)
-
   const updatedTodo: UpdateTodoRequest = JSON.parse(event.body)
   
   const userId = parseAuthorization(event.headers.Authorization)
 
-  //console.log('Parsed into: ', updatedTodo)
-  logger.info('Parsed into: ', updatedTodo)
-
   const newitem = await updateDynDB(userId, todoId, updatedTodo)
 
-
-  invokeLambda(todoId)
+  //await invokeLambda(todoId)
+  await invokeLambda(todoId, userId)
 
     //return to client application that write succeeded
   return {
