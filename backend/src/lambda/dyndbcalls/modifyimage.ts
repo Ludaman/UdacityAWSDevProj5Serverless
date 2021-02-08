@@ -1,13 +1,14 @@
 import * as AWS  from 'aws-sdk'
-//import * as Jimp from '../../../node_modules/jimp'
-
+import Jimp from 'jimp/';
 const docClient = new AWS.DynamoDB.DocumentClient()
 const todosTable = process.env.TODOS_TABLE
 const bucketName = process.env.IMAGES_S3_BUCKET
-//const s3 = new AWS.S3()
+const s3 = new AWS.S3()
+import { createLogger } from '../../utils/logger'
 
 
 export async function modifyImage(todoId: string, userId: string) {
+  const logger = createLogger('modifyimagehandler')
 
     const params1 = {
       TableName: todosTable,
@@ -18,7 +19,6 @@ export async function modifyImage(todoId: string, userId: string) {
     }
 
     console.log("Looking for Image by params", params1)
-
 
     const todoObject =  await docClient.get(params1, function(err, data) {
       if (err) {
@@ -31,25 +31,33 @@ export async function modifyImage(todoId: string, userId: string) {
     console.log("Found todo", todoObject)
     if(todoObject) { //then we found a single unique object like we expected
         if( todoObject.Item.attachmentUrl) { //then we found a URL associated with the todo so we can try to modify it
-            console.log("Found URL for image", todoObject.Item.attachmentUrl)
-           // var image = await Jimp.read(todoObject.Item.attachmentUrl)
-            console.log("downloaded image")
             
-           // image.invert()
-            console.log("INVERTED IMAGE")
+            var imageSize
+              
+            await s3.headObject({Key: todoId, Bucket: bucketName}).promise().then(res=>res.ContentLength).then(size =>imageSize=size)
+            
+            console.log("IMAGESIZE ", imageSize)
+            if (imageSize>250000) {
+              logger.info(`IMAGE TOO LARGE - WILL NOT INVERT`)
+            } else {
 
-            //const convertedBuffer = await image.getBufferAsync(Jimp.MIME_PNG)
-
-            console.log(`Writing image back to S3 bucket: ${bucketName}`)
-
-            // await s3
-            // .putObject({
-            //   Bucket: bucketName,
-            //   Key: `${todoId}`,
-            //   Body: convertedBuffer
-            // })
-            // .promise()
-
+              var image = await Jimp.read(todoObject.Item.attachmentUrl)
+              logger.info("downloaded image", image)
+              image.invert()
+              logger.info("INVERTED IMAGE")
+  
+              const convertedBuffer = await image.getBufferAsync(Jimp.MIME_PNG)
+  
+              logger.info(`Writing image back to S3 bucket: ${bucketName}`)
+ 
+              await s3
+              .putObject({
+                Bucket: bucketName,
+                Key: `${todoId}`,
+                Body: convertedBuffer
+              })
+              .promise()
+            }
         } else {
             console.log("no URL associated with todo, exiting modifyImage function")
         }
